@@ -2,6 +2,7 @@
 import './App.css';
 // import HomePage from './pages/HomePage';
 import TodoWindow from './components/TodoWindow';
+import GithubProgressTracker from './components/GithubProgressTracker';
 import styled from 'styled-components';
 
 function App() {
@@ -9,7 +10,8 @@ function App() {
     <Container className="App">
       
       {/* <HomePage /> */}
-      <TodoWindow />
+      {/* <TodoWindow /> */}
+      <GithubProgressTracker/>
     </Container>
   );
 }
