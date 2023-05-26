@@ -1,103 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { RiUserLine } from 'react-icons/ri';
 
-const Container = styled.div`
+const ChatBoxContainer = styled.div`
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 300px;
   height: 400px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  z-index: 999;
 `;
 
 const Header = styled.div`
+  background-color: #f2f2f2;
   padding: 10px;
-  background-color: #f4f4f4;
-  border-bottom: 1px solid #ccc;
-`;
-
-const Title = styled.h3`
-  margin: 0;
-  font-size: 16px;
-`;
-
-const Main = styled.div`
-  height: calc(100% - 120px);
-  padding: 10px;
-  overflow-y: scroll;
-  background-color: #fff;
-`;
-
-const MessageContainer = styled.div`
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  align-items: center;
 `;
 
-const UserProfileImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+const ProfileIcon = styled(RiUserLine)`
+  font-size: 24px;
   margin-right: 10px;
 `;
 
-const MessageContent = styled.div`
-  display: flex;
-  flex-direction: column;
+const ConversationContainer = styled.div`
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
 `;
 
-const MessageText = styled.p`
-  background-color: #eaf6ec;
-  padding: 10px;
+const Message = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+
+  position: relative;
+  cursor: default;
+
+  &:hover::after {
+    content: attr(data-time);
+    position: absolute;
+    top: -2px;
+    right: 0;
+    background-color: #f2f2f2;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+`;
+
+const MessageProfileIcon = styled(ProfileIcon)`
+  font-size: 18px;
+  margin-right: 5px;
+`;
+
+const MessageContent = styled.div`
+  background-color: #f2f2f2;
+  padding: 8px;
   border-radius: 5px;
-  margin: 0;
 `;
 
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
+  background-color: #f2f2f2;
   padding: 10px;
-  background-color: #f4f4f4;
 `;
 
-const Input = styled.input`
-  flex-grow: 1;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
+const InputField = styled.input`
+  flex: 1;
   margin-right: 10px;
+  padding: 8px;
+  border: 2px solid #bdbcb9;
+  border-radius: 10px;
+  outline: none;
 `;
 
 const SendButton = styled.button`
   border: none;
   background-color: #0078d7;
   color: #fff;
+  padding: 8px;
   border-radius: 5px;
-  padding: 7px;
   cursor: pointer;
 `;
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Load chat history or initialize with empty array
-    const savedMessages = JSON.parse(localStorage.getItem('chatMessages'));
-    if (savedMessages) {
-      setMessages(savedMessages);
-    } else {
-      setMessages([]);
-    }
+    const newSocket = new WebSocket('ws://your-websocket-server-url');
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
   }, []);
 
   useEffect(() => {
-    // Save chat messages to local storage
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-  }, [messages]);
+    if (!socket) return;
+
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    };
+
+    return () => {
+      socket.onmessage = null;
+    };
+  }, [socket]);
 
   const handleSendMessage = () => {
     if (inputText.trim() !== '') {
@@ -105,43 +122,43 @@ const ChatBox = () => {
         id: new Date().getTime(),
         text: inputText,
         sender: 'User1',
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toLocaleString(),
       };
+
+      if (socket) {
+        socket.send(JSON.stringify(newMessage));
+      }
+
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       setInputText('');
     }
   };
 
-  const handleDeleteChat = () => {
-    setMessages([]);
-  };
-
   return (
-    <Container>
+    <ChatBoxContainer>
+
       <Header>
-        <Title>User1 - User2 Chat</Title>
+        <ProfileIcon />
+        <div>User1</div>
       </Header>
-      <Main>
+      <ConversationContainer>
         {messages.map((message) => (
-          <MessageContainer key={message.id}>
-            <UserProfileImage src="user1-profile-image.jpg" alt="User1 Profile" />
-            <MessageContent>
-              <MessageText>{message.text}</MessageText>
-              <p>{message.timestamp}</p>
-            </MessageContent>
-          </MessageContainer>
+          <Message key={message.id} data-time={message.timestamp}>
+            <MessageProfileIcon />
+            <MessageContent>{message.text}</MessageContent>
+          </Message>
         ))}
-      </Main>
+      </ConversationContainer>
       <InputContainer>
-        <Input
+        <InputField
           type="text"
-          placeholder="Type your message..."
+          placeholder="Type a message..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
         />
         <SendButton onClick={handleSendMessage}>Send</SendButton>
       </InputContainer>
-    </Container>
+    </ChatBoxContainer>
   );
 };
 
