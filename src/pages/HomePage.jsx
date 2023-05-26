@@ -5,7 +5,7 @@ const HomePage = () => {
   return (
       <Container className="container">
           <div className="up-part">
-              <h1>ProCatalyst</h1>
+              <h1 className='headline'>ProCatalyst</h1>
           </div>
             <div className="down-part"></div>
     </Container>
@@ -27,13 +27,18 @@ const Container = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f5f5f5;
+        background-color: #00B9AE;
+    }
+
+    .headline {
+        font-size: 5rem;
+        color: #f5f5f5;
     }
 
     .down-part {
         height: 50%;
         width: 100%;
-        background-color: #f5f5f5;
+        background-color: #02c3bd;
     }
 
 `
