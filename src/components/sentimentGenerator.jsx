@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import openai from 'openai';
 
 // Set up your OpenAI API credentials
-openai.api_key = 'YOUR_API_KEY';
+openai.api_key = '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';
 
 const SentimentGenerator = () => {
   const [generatedSentiment, setGeneratedSentiment] = useState('');
