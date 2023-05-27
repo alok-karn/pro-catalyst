@@ -37,7 +37,6 @@ const Message = styled.div`
   display: flex;
   align-items: flex-start;
   margin-bottom: 10px;
-
   position: relative;
   cursor: default;
 
@@ -51,6 +50,7 @@ const Message = styled.div`
     border-radius: 5px;
     font-size: 12px;
     white-space: nowrap;
+  }
 `;
 
 const MessageProfileIcon = styled(ProfileIcon)`
@@ -93,9 +93,10 @@ const ChatBox = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [socket, setSocket] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const newSocket = new WebSocket('ws://your-websocket-server-url');
+    const newSocket = new WebSocket('ws://localhost:5000/');
     setSocket(newSocket);
 
     return () => {
@@ -116,6 +117,26 @@ const ChatBox = () => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    let typingTimer;
+
+    const handleTyping = () => {
+      clearTimeout(typingTimer);
+      setIsVisible(true);
+
+      typingTimer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+    };
+
+    document.addEventListener('keydown', handleTyping);
+
+    return () => {
+      document.removeEventListener('keydown', handleTyping);
+      clearTimeout(typingTimer);
+    };
+  }, []);
+
   const handleSendMessage = () => {
     if (inputText.trim() !== '') {
       const newMessage = {
@@ -131,12 +152,12 @@ const ChatBox = () => {
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       setInputText('');
+      setIsVisible(true);
     }
   };
 
   return (
-    <ChatBoxContainer>
-
+    <ChatBoxContainer isVisible={isVisible}>
       <Header>
         <ProfileIcon />
         <div>User1</div>

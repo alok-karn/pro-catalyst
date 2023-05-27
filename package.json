@@ -21,7 +21,10 @@
     "react-dom": "^18.2.0",
     "react-github-calendar": "^4.0.0",
     "react-icons": "^4.8.0",
+    "react-reveal": "^1.2.2",
     "react-scripts": "5.0.1",
+    "react-spring": "^9.7.1",
+    "react-transition-group": "^4.4.5",
     "sass": "^1.62.1",
     "socket.io": "^4.6.1",
     "styled-components": "^5.3.11",
@@ -32,7 +35,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server":"nodemon server/server.js",
+    "server": "nodemon server/server.js",
     "startReact": "react-scripts start"
   },
   "eslintConfig": {

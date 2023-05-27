@@ -1,23 +1,35 @@
 // import logo from './logo.svg';
 import './App.css';
-// import HomePage from './pages/HomePage';
+import React, { useEffect } from 'react';
+import HomePage from './pages/HomePage';
 
 // import TodoWindow from './components/TodoWindow';
 import ChatBox from './components/ChatBox';
 
 import TodoWindow from './components/TodoWindow';
-import GithubProgressTracker from './components/GithubProgressTracker';
+// import GithubProgressTracker from './components/GithubProgressTracker';
 
 import styled from 'styled-components';
 
 function App() {
+
+  // useEffect(() => {
+  //   changeBackgroundColor();
+  // }, []);
+
+  // const changeBackgroundColor = () => {
+  //   const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+  //   const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  //   document.body.style.backgroundColor = randomColor;
+  // };
+
   return (
     <Container className="App">
       
-      {/* <HomePage /> */}
+      <HomePage />
       {/* <TodoWindow /> */}
 
-      <ChatBox />
+      {/* <ChatBox /> */}
 
       {/* <GithubProgressTracker/> */}
 
